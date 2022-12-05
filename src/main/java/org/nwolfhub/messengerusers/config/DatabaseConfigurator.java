@@ -1,7 +1,9 @@
 package org.nwolfhub.messengerusers.config;
 
+import org.nwolfhub.messengerusers.Auther;
 import org.nwolfhub.shared.Utils;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 @Configuration
+@ComponentScan(basePackageClasses = {Auther.class})
 public class DatabaseConfigurator {
 
     private static HashMap<String, String> data;
@@ -56,5 +59,26 @@ public class DatabaseConfigurator {
             return prop;
         }
         else throw new RuntimeException("Could not read config file!");
+    }
+    @Bean(name = "redisData")
+    @Primary
+    public Auther.RedisConnectionData redisConnectionData() {
+        try {
+            if (read()) {
+                if (data.containsKey("use_redis")) {
+                    boolean use_redis = Boolean.parseBoolean(data.get("use_redis"));
+                    if (use_redis) {
+                        String url = data.get("redis_url");
+                        Integer port = Integer.valueOf(data.get("redis_port"));
+                        String password = null;
+                        String usePassword = data.get("redis_use_password");
+                        if(usePassword!=null && usePassword.equals("true")) password = data.get("redis_password");
+                        return new Auther.RedisConnectionData().setUseRedis(true).setUrl(url).setPort(port).setUsePassword(password!=null).setPassword(password);
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+        System.out.println("Warning! Redis will not be used!");
+        return new Auther.RedisConnectionData().setUseRedis(false);
     }
 }
