@@ -1,6 +1,7 @@
 package org.nwolfhub.messengerusers.config;
 
 import org.nwolfhub.messengerusers.Auther;
+import org.nwolfhub.messengerusers.api.UserController;
 import org.nwolfhub.shared.Utils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackageClasses = {Auther.class})
+@ComponentScan(basePackageClasses = {Auther.class, UserController.class})
 public class DatabaseConfigurator {
 
     private static HashMap<String, String> data;
@@ -80,5 +81,15 @@ public class DatabaseConfigurator {
         } catch (Exception ignored) {}
         System.out.println("Warning! Redis will not be used!");
         return new Auther.RedisConnectionData().setUseRedis(false);
+    }
+
+    @Bean("Auther")
+    public Auther auther() {
+        try {
+            return new Auther(redisConnectionData());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
