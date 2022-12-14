@@ -3,6 +3,7 @@ package org.nwolfhub.messengerusers.config;
 import org.nwolfhub.messengerusers.Auther;
 import org.nwolfhub.messengerusers.api.UserController;
 import org.nwolfhub.shared.Utils;
+import org.nwolfhub.shared.database.HibernateController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +61,11 @@ public class DatabaseConfigurator {
             return prop;
         }
         else throw new RuntimeException("Could not read config file!");
+    }
+    @Bean(name = "hibernateController")
+    @Primary
+    public HibernateController hibernateController() {
+        return new HibernateController(getHibernateProperties());
     }
     @Bean(name = "redisData")
     @Primary
