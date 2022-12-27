@@ -19,7 +19,7 @@ public class UserController {
     private static AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(DatabaseConfigurator.class);
 
     private static Auther auther = context.getBean(Auther.class);
-    private static UserDao dao = new UserDao();
+    private static UserDao dao = (UserDao) new AnnotationConfigApplicationContext(DatabaseConfigurator.class).getBean("usersDao");
 
     @GetMapping("/users/get")
     public static ResponseEntity<String> get(@RequestParam(name = "username", defaultValue = "", required = false) String username, @RequestParam(name = "id", defaultValue = "", required = false) String id, @RequestHeader(name = "token", defaultValue = "") String token, @RequestHeader(name = "X-Forwarded-For", defaultValue = "0.0.0.0") String ip) throws Auther.RedisNotUsedException {
