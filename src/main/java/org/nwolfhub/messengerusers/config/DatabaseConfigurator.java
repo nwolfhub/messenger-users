@@ -4,6 +4,7 @@ import org.nwolfhub.messengerusers.Auther;
 import org.nwolfhub.messengerusers.api.UserController;
 import org.nwolfhub.shared.Utils;
 import org.nwolfhub.shared.database.HibernateController;
+import org.nwolfhub.shared.database.UserDao;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -98,5 +99,9 @@ public class DatabaseConfigurator {
             e.printStackTrace();
             return null;
         }
+    }
+    @Bean("usersDao")
+    public UserDao dao() {
+        return new UserDao(new HibernateController(getHibernateProperties()));
     }
 }
